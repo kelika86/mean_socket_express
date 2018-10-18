@@ -1,0 +1,61 @@
+<html>
+
+    <head>
+        <title>Survey</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                var socket = io.connect(); //1
+
+                $('form').submit(function(e){
+                    e.preventDefault();
+                    socket.emit('form_submitted', {
+                        name: $('#name').val(),
+                        location: $('#location').val(),
+                        language: $('#language').val(),
+                        comment: $('#comment').val(),
+                    });
+                });
+                socket.on('server_response', function(data){
+                    $('#submitted').html('<div id="response"><span class="bold">You emitted the following information to the server:</span><br><span class="bold">Name:</span> ${data.response.name}<br><span class="bold">Dojo Location:</span>${data.response.location}<br><span class="bold">Favorite Language</span> ${data.response.language}<br><span class="bold">Comment:</span>${data.response.comment}<br><span class="bold">Random number:</span><span class="num"></span>');
+                });
+                socket.on('random_number', function(data){
+                    $('.num').html(data.response);
+                    })
+                });
+        </script>
+    </head>
+
+    <body>
+        <h1>Survey Form</h1>
+        <fieldset>
+            <form action="">
+                <p>Your Name
+                    <input type="text" name="name">
+                </p>
+                <p>Dojo Location:
+                    <select name="location">
+                        <option value="San Jose">San Jose</option>
+                        <option value="Burbank">Burbank</option>
+                        <option value="Seattle">Seattle</option>
+                        <option value="Chicago">Chicago</option>
+                    </select>
+                </p>
+                <p>Favorite Lanugage:
+                    <select name="language">
+                        <option value="Python">Python</option>
+                        <option value="Java">Java</option>
+                        <option value="HTML">HTML</option>
+                        <option value="CSS">CSS</option>
+                    </select>
+                </p>
+                <p>Comment (optional)</p>
+                <textarea name="comment" cols="30" rows="10"></textarea>
+                <input type="submit" value="Submit">
+            </form>
+        </fieldset>
+    </body>
+
+</html>
